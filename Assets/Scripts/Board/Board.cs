@@ -139,26 +139,95 @@ public class Board
         }
     }
 
-
+    private List<Cell> _FillCell = new List<Cell>();
+    private int[] normalItemCount = new int[7];
     internal void FillGapsWithNewItems()
     {
+        //Debug.Log($"---------FillGapsWithNewItems---------");
+        _FillCell.Clear();
+        for (int i = 0; i < normalItemCount.Length; i++)
+        {
+            normalItemCount[i] = 0;
+        }
+
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
             {
                 Cell cell = m_cells[x, y];
-                if (!cell.IsEmpty) continue;
-
-                NormalItem item = new NormalItem();
-
-                item.SetType(Utils.GetRandomNormalType());
-                item.SetView(m_itemSkins);
-                item.SetViewRoot(m_root);
-
-                cell.Assign(item);
-                cell.ApplyItemPosition(true);
+                if (cell.IsEmpty)
+                    _FillCell.Add(cell);
+                else
+                {
+                    NormalItem nitem = cell.Item as NormalItem;
+                    if (nitem != null)
+                    {
+                        normalItemCount[(int)nitem.ItemType]++;
+                    }
+                }
             }
         }
+
+        int min = int.MaxValue;
+        NormalItem.eNormalType minType = NormalItem.eNormalType.TYPE_ONE;
+        for (int i = 0; i < normalItemCount.Length; i++)
+        {
+            if (normalItemCount[i] < min)
+            {
+                min = normalItemCount[i];
+                minType = (NormalItem.eNormalType)i;
+            }
+        }
+
+        foreach (var cell in _FillCell)
+        {
+            GetSurroundingItems(cell);
+            _SurroundingItem.Add(minType);
+
+            NormalItem item = new NormalItem();
+            var itemType = Utils.GetRandomNormalTypeExcept(_SurroundingItem.ToArray());
+            item.SetType(itemType);
+            item.SetView(m_itemSkins);
+            item.SetViewRoot(m_root);
+
+            cell.Assign(item);
+            cell.ApplyItemPosition(true);
+        }
+    }
+
+    private HashSet<NormalItem.eNormalType> _SurroundingItem = new HashSet<NormalItem.eNormalType>();
+    private void GetSurroundingItems(Cell cell)
+    {
+        _SurroundingItem.Clear();
+
+        if (cell.NeighbourUp != null)
+        {
+            NormalItem nitem = cell.NeighbourUp.Item as NormalItem;
+            if (nitem != null)
+                _SurroundingItem.Add(nitem.ItemType);
+        }
+
+        if (cell.NeighbourBottom != null)
+        {
+            NormalItem nitem = cell.NeighbourBottom.Item as NormalItem;
+            if (nitem != null)
+                _SurroundingItem.Add(nitem.ItemType);
+        }
+
+        if (cell.NeighbourLeft != null)
+        {
+            NormalItem nitem = cell.NeighbourLeft.Item as NormalItem;
+            if (nitem != null)
+                _SurroundingItem.Add(nitem.ItemType);
+        }
+
+        if (cell.NeighbourRight != null)
+        {
+            NormalItem nitem = cell.NeighbourRight.Item as NormalItem;
+            if (nitem != null)
+                _SurroundingItem.Add(nitem.ItemType);
+        }
+
     }
 
     internal void ExplodeAllItems()
@@ -412,7 +481,7 @@ public class Board
             {
                 Cell cell = m_cells[x, y];
 
-                if (_CheckedCell.Contains(cell)) 
+                if (_CheckedCell.Contains(cell))
                     continue;
 
                 _CheckedCell.Add(cell);
