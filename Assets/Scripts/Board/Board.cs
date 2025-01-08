@@ -352,7 +352,7 @@ public class Board
         var dir = GetMatchDirection(matches);
 
         var bonus = matches.Where(x => x.Item is BonusItem).FirstOrDefault();
-        if(bonus == null)
+        if (bonus == null)
         {
             return matches;
         }
@@ -396,14 +396,22 @@ public class Board
     }
 
     private List<Cell> _PotentialMatches = new List<Cell>();
+    private HashSet<Cell> _CheckedCell = new HashSet<Cell>();
     internal List<Cell> GetPotentialMatches()
     {
         _PotentialMatches.Clear();
+        _CheckedCell.Clear();
+
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
             {
                 Cell cell = m_cells[x, y];
+
+                if (_CheckedCell.Contains(cell)) 
+                    continue;
+
+                _CheckedCell.Add(cell);
 
                 //check right
                 /* example *\
@@ -413,14 +421,12 @@ public class Board
                   * & & * ?
                   * * * ? *
                 \* example  */
-
                 if (cell.NeighbourRight != null)
                 {
+                    _CheckedCell.Add(cell.NeighbourRight);
                     _PotentialMatches.AddRange(GetPotentialMatch(cell, cell.NeighbourRight, cell.NeighbourRight.NeighbourRight));
                     if (_PotentialMatches.Count > 0)
-                    {
                         break;
-                    }
                 }
 
                 //check up
@@ -433,11 +439,10 @@ public class Board
                 \* example  */
                 if (cell.NeighbourUp != null)
                 {
+                    _CheckedCell.Add(cell.NeighbourUp);
                     _PotentialMatches.AddRange(GetPotentialMatch(cell, cell.NeighbourUp, cell.NeighbourUp.NeighbourUp));
                     if (_PotentialMatches.Count > 0)
-                    {
                         break;
-                    }
                 }
 
                 //check bottom
@@ -450,11 +455,10 @@ public class Board
                 \* example  */
                 if (cell.NeighbourBottom != null)
                 {
+                    _CheckedCell.Add(cell.NeighbourBottom);
                     _PotentialMatches.AddRange(GetPotentialMatch(cell, cell.NeighbourBottom, cell.NeighbourBottom.NeighbourBottom));
                     if (_PotentialMatches.Count > 0)
-                    {
                         break;
-                    }
                 }
 
                 //check left
@@ -467,11 +471,10 @@ public class Board
                 \* example  */
                 if (cell.NeighbourLeft != null)
                 {
+                    _CheckedCell.Add(cell.NeighbourLeft);
                     _PotentialMatches.AddRange(GetPotentialMatch(cell, cell.NeighbourLeft, cell.NeighbourLeft.NeighbourLeft));
                     if (_PotentialMatches.Count > 0)
-                    {
                         break;
-                    }
                 }
 
                 /* example *\
@@ -501,7 +504,6 @@ public class Board
                   * & * * *
                   * * * * *
                 \* example  */
-                neib = null;
                 neib = cell.NeighbourUp;
                 if (neib != null && neib.NeighbourUp != null && neib.NeighbourUp.IsSameType(cell))
                 {
@@ -516,7 +518,8 @@ public class Board
                 }
             }
 
-            if (_PotentialMatches.Count > 0) break;
+            if (_PotentialMatches.Count > 0)
+                break;
         }
 
         return _PotentialMatches;
