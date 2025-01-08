@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class LevelTime : LevelCondition
 {
     private float m_time;
-
+    private int int_time;
     private GameManager m_mngr;
 
     public override void Setup(float value, Text txt, GameManager mngr)
@@ -39,7 +39,12 @@ public class LevelTime : LevelCondition
     protected override void UpdateText()
     {
         if (m_time < 0f) return;
-
-        m_txt.text = string.Format("TIME:\n{0:00}", m_time);
+        if (int_time != (int)m_time)
+        {
+            int_time = (int)m_time;
+            m_txt.text = string.Format("TIME:\n{0:00}", m_time);
+            //TextMeshPro SetText()
+            //ZString
+        }
     }
 }
