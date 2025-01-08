@@ -25,9 +25,13 @@ public class Board
 
     private int m_matchMin;
 
-    public Board(Transform transform, GameSettings gameSettings)
+    private ItemSkins m_itemSkins;
+
+    public Board(Transform transform, GameSettings gameSettings, ItemSkins itemSkins)
     {
         m_root = transform;
+
+        m_itemSkins = itemSkins;
 
         m_matchMin = gameSettings.MatchesMin;
 
@@ -101,7 +105,7 @@ public class Board
                 }
 
                 item.SetType(Utils.GetRandomNormalTypeExcept(types.ToArray()));
-                item.SetView();
+                item.SetView(m_itemSkins);
                 item.SetViewRoot(m_root);
 
                 cell.Assign(item);
@@ -148,7 +152,7 @@ public class Board
                 NormalItem item = new NormalItem();
 
                 item.SetType(Utils.GetRandomNormalType());
-                item.SetView();
+                item.SetView(m_itemSkins);
                 item.SetViewRoot(m_root);
 
                 cell.Assign(item);
@@ -283,7 +287,7 @@ public class Board
                 cellToConvert = matches[rnd];
             }
 
-            item.SetView();
+            item.SetView(m_itemSkins);
             item.SetViewRoot(m_root);
 
             cellToConvert.Free();

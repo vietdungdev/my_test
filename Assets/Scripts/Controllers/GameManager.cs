@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
 
 
     private GameSettings m_gameSettings;
-
+    private ItemSkins m_itemSkins;
 
     private BoardController m_boardController;
 
@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour
         State = eStateGame.SETUP;
 
         m_gameSettings = Resources.Load<GameSettings>(Constants.GAME_SETTINGS_PATH);
+        m_itemSkins = Resources.Load<ItemSkins>(Constants.ITEM_SKIN_PATH);
 
         m_uiMenu = FindObjectOfType<UIMainManager>();
         m_uiMenu.Setup(this);
@@ -88,7 +89,7 @@ public class GameManager : MonoBehaviour
         gameMode = mode;
 
         m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
-        m_boardController.StartGame(this, m_gameSettings);
+        m_boardController.StartGame(this, m_gameSettings, m_itemSkins);
 
         if (mode == eLevelMode.MOVES)
         {

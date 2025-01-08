@@ -23,4 +23,7 @@
     public const string PREFAB_BONUS_VERTICAL = "prefabs/itemBonusVertical";
 
     public const string PREFAB_BONUS_BOMB = "prefabs/itemBonusBomb";
+
+    public const string ITEM_SKIN_PATH = "ItemSkins";
+
 }

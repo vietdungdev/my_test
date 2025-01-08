@@ -22,6 +22,19 @@ public class NormalItem : Item
         ItemType = type;
     }
 
+    public override void SetView(ItemSkins itemSkins)
+    {
+        base.SetView(itemSkins);
+        int index = (int)ItemType;
+        if(itemSkins.itemSkins.Count > index)
+        {
+            if (View.TryGetComponent<SpriteRenderer>(out var sr))
+            {
+                sr.sprite = itemSkins.itemSkins[index];
+            }
+        }
+    }
+
     protected override string GetPrefabName()
     {
         string prefabname = string.Empty;

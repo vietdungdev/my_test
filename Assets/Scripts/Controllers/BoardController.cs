@@ -21,6 +21,8 @@ public class BoardController : MonoBehaviour
 
     private Collider2D m_hitCollider;
 
+    private ItemSkins m_itemSkins;
+
     private GameSettings m_gameSettings;
 
     private List<Cell> m_potentialMatch = new List<Cell>();
@@ -31,17 +33,19 @@ public class BoardController : MonoBehaviour
 
     private bool m_gameOver;
 
-    public void StartGame(GameManager gameManager, GameSettings gameSettings)
+    public void StartGame(GameManager gameManager, GameSettings gameSettings, ItemSkins itemSkins)
     {
         m_gameManager = gameManager;
 
         m_gameSettings = gameSettings;
 
+        m_itemSkins = itemSkins;
+
         m_gameManager.StateChangedAction += OnGameStateChange;
 
         m_cam = Camera.main;
 
-        m_board = new Board(this.transform, gameSettings);
+        m_board = new Board(this.transform, gameSettings, itemSkins);
 
         Fill();
     }
