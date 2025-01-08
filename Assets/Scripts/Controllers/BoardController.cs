@@ -23,7 +23,7 @@ public class BoardController : MonoBehaviour
 
     private GameSettings m_gameSettings;
 
-    private List<Cell> m_potentialMatch;
+    private List<Cell> m_potentialMatch = new List<Cell>();
 
     private float m_timeAfterFill;
 
@@ -137,6 +137,7 @@ public class BoardController : MonoBehaviour
         m_hitCollider = null;
     }
 
+    List<Cell> matches = new List<Cell>();
     private void FindMatchesAndCollapse(Cell cell1, Cell cell2)
     {
         if (cell1.Item is BonusItem)
@@ -154,7 +155,8 @@ public class BoardController : MonoBehaviour
             List<Cell> cells1 = GetMatches(cell1);
             List<Cell> cells2 = GetMatches(cell2);
 
-            List<Cell> matches = new List<Cell>();
+            //List<Cell> matches = new List<Cell>();
+            matches.Clear();
             matches.AddRange(cells1);
             matches.AddRange(cells2);
             matches = matches.Distinct().ToList();
@@ -177,7 +179,8 @@ public class BoardController : MonoBehaviour
 
     private void FindMatchesAndCollapse()
     {
-        List<Cell> matches = m_board.FindFirstMatch();
+        matches.Clear();
+        matches.AddRange(m_board.FindFirstMatch());
 
         if (matches.Count > 0)
         {
@@ -185,7 +188,8 @@ public class BoardController : MonoBehaviour
         }
         else
         {
-            m_potentialMatch = m_board.GetPotentialMatches();
+            m_potentialMatch.Clear();
+            m_potentialMatch.AddRange(m_board.GetPotentialMatches());
             if (m_potentialMatch.Count > 0)
             {
                 IsBusy = false;
@@ -224,7 +228,7 @@ public class BoardController : MonoBehaviour
             matches[i].ExplodeItem();
         }
 
-        if(matches.Count > m_gameSettings.MatchesMin)
+        if (matches.Count > m_gameSettings.MatchesMin)
         {
             m_board.ConvertNormalToBonus(matches, cellEnd);
         }
